@@ -159,6 +159,10 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
             if self._requirements_check.check_requirements() is True and not self._config.has_locals:
                 requirements_met = True
 
+            if self._get_needs_embedded():
+                self._logger.debug("Needs embedded")
+                requirements_met = False
+
             if requirements_met:
                 self._logger.debug("Requirements are met. Nothing more to do.")
                 self._log_ex_time(self._start_time)
@@ -249,6 +253,7 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
             self._logger.debug("Created InstallPkg instance")
             pkg_installer.install()
 
+            self._handel_embedded()
             self._post_install()
 
             if has_window:
@@ -569,6 +574,49 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
             self._log_sys_path_register_result(target_path.target, result)
 
     # endregion Isolate
+
+    # region handel windows embedded
+    def _get_needs_embedded(self) -> bool:
+        if not self._config.is_win:
+            return False
+        try:
+            import _sqlite3
+
+            return False
+        except ImportError:
+            return True
+
+    def _handel_embedded(self) -> None:
+        if not self._get_needs_embedded():
+            return
+        from ___lo_pip___.embedded_config import EmbeddedConfig
+
+        cfg = EmbeddedConfig()
+        bz_file = cfg.install_dir / "_sqlite3.pyd"
+        if bz_file.exists():
+            self._logger.debug(f"Found sqlite3 file: {bz_file}")
+            self._add_embedded_to_sys_path(cfg.install_dir)
+            return
+        from ___lo_pip___.install.embedded_install import EmbeddedInstall
+
+        bz_install = EmbeddedInstall(ctx=self.ctx)
+        bz_install.install()
+        self._add_embedded_to_sys_path(cfg.install_dir)
+
+    def _add_embedded_to_sys_path(self, pth: Path | None) -> None:
+        # sourcery skip: class-extract-method
+        if pth is None:
+            from ___lo_pip___.embedded_config import EmbeddedConfig
+
+            cfg = EmbeddedConfig()
+            pth = cfg.install_dir
+        if not pth.exists():
+            self._logger.debug(f"Dir no found: {pth}")
+            return
+        result = self._session.register_path(pth, True)
+        self._log_sys_path_register_result(pth, result)
+
+    # endregion handel windows embedded
 
     # region Debug
 

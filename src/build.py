@@ -4,17 +4,18 @@ import shutil
 from .config import Config
 from . import file_util
 from .build_args import BuildArgs
-from .processing.token import Token
-from .processing.packages import Packages
-from .processing.req_packages import ReqPackages
-from .processing.update import Update
-from .processing.json_config import JsonConfig
+from .install.pre_install_pure import PreInstallPure
 from .processing.default_resource import DefaultResource
+from .processing.embedded_process import EmbeddedProcessor
+from .processing.json_config import JsonConfig
 from .processing.locale.descriptions import Descriptions
+from .processing.locale.name import Name
 from .processing.locale.publisher import Publisher
 from .processing.locale.publisher_update import PublisherUpdate
-from .processing.locale.name import Name
-from .install.pre_install_pure import PreInstallPure
+from .processing.packages import Packages
+from .processing.req_packages import ReqPackages
+from .processing.token import Token
+from .processing.update import Update
 
 
 class Build:
@@ -62,6 +63,7 @@ class Build:
             self._pre_install_pure_packages()
 
         self._write_xml()
+        self._process_embedded()
         self._ensure_default_resource()
 
         if self._args.make_dist:
@@ -132,6 +134,11 @@ class Build:
         config_file = self._build_path / token.get_token_value("lo_pip") / "config.json"
         json_config = JsonConfig()
         json_config.update_json_config(config_file)
+
+    def _process_embedded(self) -> None:
+        """Processes the bz2 files."""
+        eb = EmbeddedProcessor()
+        eb.process()
 
     def _copy_py_packages(self) -> None:
         """Copies the python packages to the build directory."""

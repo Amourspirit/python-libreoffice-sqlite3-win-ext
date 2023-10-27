@@ -1,10 +1,10 @@
-# See: https://github.com/Amourspirit/python-libreoffice-pip/wiki/pyproject.toml
+# See: https://github.com/Amourspirit/python-libreoffice-sqlite3-win-ext/wiki/pyproject.toml
 [tool.oxt.config]
 auto_install_in_site_packages = true
 build_dir = "build"
-dist_dir = "tmp_dist" # should be changed to someting like dist, tmp_dist is not included in git
-install_wheel = true
-oxt_name = "OooPip"
+dist_dir = "dist" # should be changed to someting like dist, tmp_dist is not included in git
+install_wheel = false
+oxt_name = "sqlite3-win"
 py_pkg_dir = "py_pkgs"
 py_pkg_files = []
 py_pkg_names = [] # ["ooodev", "ooo"]
@@ -24,31 +24,29 @@ sym_link_cpython = false
 pip_wheel_url = "https://files.pythonhosted.org/packages/50/c2/e06851e8cc28dcad7c155f4753da8833ac06a5c704c109313b8d5a62968a/pip-23.2.1-py3-none-any.whl"
 test_internet_url = "https://duckduckgo.com"
 log_pip_installs = false
-lo_identifier = "org.openoffice.extensions.ooopip"
-lo_implementation_name = "OooPipRunner"
-display_name = "LibreOffice Python Pip Template"
-description = "Template for creating pip based extensions for for LibreOffice"
+lo_identifier = "com.github.amourspirit.extensions.sqlite"
+lo_implementation_name = "SqliteRunner"
+display_name = "Sqlite3 for LibreOffice Python"
+description = "Install Sqlite3 for LibreOffice Python"
 publisher = "AmourSpirit"
-publisher_url = "https://github.com/Amourspirit/python-libreoffice-pip"
-update_url_xml = "https://raw.githubusercontent.com/Amourspirit/python-libreoffice-pip/main/___dist_dir___/___update_file___"
-update_url_oxt = "https://raw.githubusercontent.com/Amourspirit/python-libreoffice-pip/main/___dist_dir___/___oxt_name___.oxt"
+publisher_url = "https://github.com/Amourspirit/python-libreoffice-sqlite3-win-ext"
+update_url_xml = "https://raw.githubusercontent.com/Amourspirit/python-libreoffice-sqlite3-win-ext/main/___dist_dir___/___update_file___"
+update_url_oxt = "https://raw.githubusercontent.com/Amourspirit/python-libreoffice-sqlite3-win-ext/main/___dist_dir___/___oxt_name___.oxt"
 url_pip = 'https://bootstrap.pypa.io/get-pip.py'
 # set log_file to "" to disable logging
-log_file = "pip_install.log"
-log_name = "OOO PIP Installer"
+log_file = "sqlite3_install.log"
+log_name = "Sqlite3 Installer"
 log_level = "DEBUG" # NONE, DEBUG, INFO, WARNING, ERROR, CRITICAL
 log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 log_add_console = false # should be false for production
-lo_pip = "lo_pip"
-platform = "all"
+lo_pip = "lo_sqlite_ext"
+platform = "windows_x86, windows_x86_64"
 startup_event = "OnStartApp" # OnStartApp or onFirstVisibleTask
 show_progress = true
 delay_startup = true # determines if installing waits fo the window to load before installing
 
 [tool.oxt.requirements]
-# https://python-poetry.org/docs/dependency-specification/
-typing-extensions = ">=4.7.0"
-verr = ">=1.1.2"
+
 
 [tool.oxt.isolate]
 windows = [] # ["odfpy"]
@@ -58,7 +56,20 @@ windows = [] # ["odfpy"]
 
 [tool.oxt.locale.publisher]
 en = { name = "___publisher___", url="___publisher_url___" }
-fr = { name = "AmourEsprit", url="___publisher_url___/fr" }
+
+[tool.oxt.embed.32_bit]
+"3.8" = { url = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-win32.zip", md5="659adf421e90fba0f56a9631f79e70fb" }
+"3.9" = { url = "https://www.python.org/ftp/python/3.9.13/python-3.9.13-embed-win32.zip", md5="fec0bc06857502a56dd1aeaea6488ef8" }
+"3.10" = { url = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-embed-win32.zip", md5="fee70dae06c25c60cbe825d6a1bfda57" }
+"3.11" = { url = "https://www.python.org/ftp/python/3.11.6/python-3.11.6-embed-win32.zip", md5="d035d12d72e2d62b6e5219ea8f3bda39" }
+"3.12" = { url = "https://www.python.org/ftp/python/3.12.0/python-3.12.0rc3-embed-win32.zip", md5="b6ed11598c929af946a110ca4db0d95c" }
+
+[tool.oxt.embed.64_bit]
+"3.8" = { url = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-amd64.zip", md5="3acb1d7d9bde5a79f840167b166bb633" }
+"3.9" = { url = "https://www.python.org/ftp/python/3.9.13/python-3.9.13-embed-amd64.zip", md5="57731cf80b1c429a0be7133266d7d7cf" }
+"3.10" = { url = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-embed-amd64.zip", md5="f1c0538b060e03cbb697ab3581cb73bc" }
+"3.11" = { url = "https://www.python.org/ftp/python/3.11.6/python-3.11.6-embed-amd64.zip", md5="ff5f34b8d2504c49fc94ffc29998b8a0" }
+"3.12" = { url = "https://www.python.org/ftp/python/3.12.0/python-3.12.0rc3-embed-arm64.zip", md5="728cbbfd0d5fc485233e1aba7884a773" }
 
 [tool.oxt.locale.name]
 en = "___display_name___"
@@ -77,7 +88,7 @@ es = "Plantilla para crear extensiones basadas en pip para LibreOffice"
 
 [tool.poetry]
 name = "libreoffice pip template"
-version = "0.1.1"
+version = "0.1.0"
 description = "Template for creating pip based extensions for for LibreOffice"
 authors = [":Barry-Thomas-Paul: Moss <bigbytetech@gmail.com>"]
 license = "MIT"
