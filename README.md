@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://user-images.githubusercontent.com/4193389/278824380-7ac5360b-4d46-4563-bafe-85865c147d05.png" alt="Sqlite3 Extension Logo" width="174" height="174">
+</p>
+
 # Sqlite3 for LibreOffice
 
 The sqlite3 module is a powerful part of the Python standard library; it lets us work with a fully featured on-disk SQL database without installing any additional software.
