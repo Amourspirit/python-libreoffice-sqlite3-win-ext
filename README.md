@@ -2,15 +2,15 @@
 <img src="https://user-images.githubusercontent.com/4193389/278824380-7ac5360b-4d46-4563-bafe-85865c147d05.png" alt="Sqlite3 Extension Logo" width="174" height="174">
 </p>
 
-# Sqlite3 for LibreOffice
+# Sqlite3 for LibreOffice on Windows
 
 The sqlite3 module is a powerful part of the Python standard library; it lets us work with a fully featured on-disk SQL database without installing any additional software.
 
-This extension add sqlite3 support to LibreOffice.
+This extension add sqlite3 support to LibreOffice on Windows.
 
 The extension can be found in the [dist](./dist) folder.
 
-## Example:
+## Example
 
 Ths extension includes `SqlCtx` which is a context manager that handles the opening and closing of the database connection. It also includes a `cursor` attribute that references a cursor object that we can use to execute SQL queries.
 
