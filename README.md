@@ -8,6 +8,8 @@ The sqlite3 module is a powerful part of the Python standard library; it lets us
 
 This extension add sqlite3 support to LibreOffice.
 
+The extension can be found in the [dist](./dist) folder.
+
 ## Example:
 
 Ths extension includes `SqlCtx` which is a context manager that handles the opening and closing of the database connection. It also includes a `cursor` attribute that references a cursor object that we can use to execute SQL queries.
