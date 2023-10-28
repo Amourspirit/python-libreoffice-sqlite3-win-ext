@@ -1,64 +1,106 @@
-# Python LibreOffice Pip Extension Template
+<p align="center">
+<img src="https://user-images.githubusercontent.com/4193389/278824380-7ac5360b-4d46-4563-bafe-85865c147d05.png" alt="Sqlite3 Extension Logo" width="174" height="174">
+</p>
 
-## Introduction
+# Sqlite3 for LibreOffice
 
-This project is intended to be a template for developers of LibreOffice Extensions.
+The sqlite3 module is a powerful part of the Python standard library; it lets us work with a fully featured on-disk SQL database without installing any additional software.
 
-Need to create a quick cross platform extension that installs python packages requirements? If so you found the correct template.
+This extension add sqlite3 support to LibreOffice.
 
-If you only need to create an extension that installs one or more Python Packages into LibreOffice the no code experience is needed. Simply make a repo from the current template, change configuration, build and your done. A new LibreOffice extension has been generated that will install your python packages when it is installed into LibreOffice. See the [Quick Start](https://github.com/Amourspirit/python-libreoffice-pip/wiki/Quick-Start) in the Wiki.
+## Example:
 
-This project is also well suited for developers who want to create a LibreOffice Extension using Python and need to Pip install one or more requirements.
+Ths extension includes `SqlCtx` which is a context manager that handles the opening and closing of the database connection. It also includes a `cursor` attribute that references a cursor object that we can use to execute SQL queries.
 
-All the tools needed to develop, debug, and test are included in this template.
-A developer can use this template to create a LibreOffice Extension that uses Python and Pip install.
+The following example can be run in the [APSO](https://extensions.libreoffice.org/en/extensions/show/apso-alternative-script-organizer-for-python) python console.
 
-The extensions created with this template can be installed cross platform.
+The demo create a database in the user's home directory called `test.db` and creates a table called `fish` with three columns: `name`, `species`, and `tank_number`. It then adds two rows of data to the table, and then reads the data back out. It then modifies the data in the table, and then deletes one of the rows.
 
-Tested on the following:
+```python
+>>> from sql_util import SqlCtx
+>>> from pathlib import Path
+>>> cs = Path.home() / "Documents/test.db"
 
-- Windows
-- Windows LibreOffice Portable
-- Mac
-- Linux sudo installed LibreOffice
-- Linux Snap installed LibreOffice
-- Linux Flatpak installed LibreOffice
-- Linux AppImage LibreOffice
+# Creating a Connection to a SQLite Database
+>>> with SqlCtx(cs) as db:
+...     print(db.connection.total_changes)
+... 
+0
 
-For more information see the [Wiki](https://github.com/Amourspirit/python-libreoffice-pip/wiki)
+# Creating a table in the database
+>>> with SqlCtx(cs) as db:
+...     _ = db.cursor.execute("CREATE TABLE fish (name TEXT, species TEXT, tank_number INTEGER)")
+... 
 
-For a working example see the following extensions:
 
-- [OOO Development Tools Extension](https://github.com/Amourspirit/libreoffice_ooodev_ext#readme)
-- [OooDev GUI Automation for Windows](https://github.com/Amourspirit/ooodev-gui-win-ext#readme)
+# Adding Data to the SQLite Database
+>>> with SqlCtx(cs) as db:
+...     with db.connection:
+...         _ = db.cursor.execute("INSERT INTO fish VALUES ('Sammy', 'shark', 1)")
+...         _ = db.cursor.execute("INSERT INTO fish VALUES ('Jamie', 'cuttlefish', 7)")
+...     print(db.connection.total_changes)
+... 
+2
 
-<details>
-<summary>Original Template Readme</summary>
+# Reading Data from the SQLite Database
+>>> with SqlCtx(cs) as db:
+...     rows = db.cursor.execute("SELECT name, species, tank_number FROM fish").fetchall()
+...     for row in rows:
+...         for key in row.keys():
+...             print(f"{key} = {row[key]}")
+... 
+name = Sammy
+species = shark
+tank_number = 1
+name = Jamie
+species = cuttlefish
+tank_number = 7
 
-# Live LibreOffice Python
+>>> with SqlCtx(cs) as db:
+...     target_fish_name = "Jamie"
+...     rows = db.cursor.execute(
+...         "SELECT name, species, tank_number FROM fish WHERE name = ?",
+...         (target_fish_name,),
+...     ).fetchall()
+...     for row in rows:
+...         for key in row.keys():
+...             print(f"{key} = {row[key]}")
+... 
+name = Jamie
+species = cuttlefish
+tank_number = 7
 
-Live LibreOffice Python is a complete development environment for creating, debugging and testing python scripts. It leverages the power of [VS Code] and has [LibreOffice] baked in that can be access via the internal web browser or via your local web browser which allows for a much more pleasant and consistent debugging experience.
 
-With the power of [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) it is possible to have [VS Code] and [LibreOffice] running together. One big benefit is a isolated and [VS Code]/[LibreOffice] environment.
+# Modifying Data in the SQLite Database
+>>> with SqlCtx(cs) as db:
+...     new_tank_number = 2
+...     moved_fish_name = "Sammy"
+...     with db.connection:
+...         _ = db.cursor.execute("UPDATE fish SET tank_number = ? WHERE name = ?", (new_tank_number, moved_fish_name))
+...         rows = db.cursor.execute("SELECT name, species, tank_number FROM fish").fetchall()
+...         for row in rows:
+...             for key in row.keys():
+...                 print(f"{key} = {row[key]}")
+... 
+name = Sammy
+species = shark
+tank_number = 2
+name = Jamie
+species = cuttlefish
+tank_number = 7
 
-Locally a project based upon this template can also be run in a [Development Container](https://code.visualstudio.com/remote/advancedcontainers/overview).
 
-It is also possible to use [GitHub CLI/CD] to create a workflow that test your project with the presents of LibreOffice. This template has a working example of testing using [GitHub CLI/CD].
-
-There are Built in [Tools](https://github.com/Amourspirit/live-libreoffice-python/wiki/Tools) such as [gitget](https://github.com/Amourspirit/live-libreoffice-python/wiki/Tools#gitget) that allow you to quickly add examples to your project from sources such as [LibreOffice Python UNO Examples]. Also there is a built in [console](https://github.com/Amourspirit/live-libreoffice-python/wiki/Console) to help debug the [API](https://api.libreoffice.org/).
-
-This templated can also be leveraged to demonstrate working examples of code.
-
-[![image](https://github.com/Amourspirit/live-libreoffice-python/assets/4193389/35758c26-63b7-48f9-99c0-84dd19b26a8f)](https://github.com/Amourspirit/live-libreoffice-python/assets/4193389/35758c26-63b7-48f9-99c0-84dd19b26a8f)
-
-## Getting Started
-
-See the [Getting Started](https://github.com/Amourspirit/live-libreoffice-python/wiki/Getting-Started) in the [Wiki](https://github.com/Amourspirit/live-libreoffice-python/wiki).
-
-[VS Code]:https://code.visualstudio.com/
-
-[LibreOffice]:https://www.libreoffice.org/
-[GitHub CLI/CD]:https://resources.github.com/ci-cd/
-[LibreOffice Python UNO Examples]:https://github.com/Amourspirit/python-ooouno-ex
-
-</details>
+# Deleting Data from the SQLite Database
+>>> with SqlCtx(cs) as db:
+...     target_fish_name = "Sammy"
+...     with db.connection:
+...         _= db.cursor.execute("DELETE FROM fish WHERE name = ?", (target_fish_name,))
+...         rows = db.cursor.execute("SELECT name, species, tank_number FROM fish").fetchall()
+...         for row in rows:
+...             for key in row.keys():
+...                 print(f"{key} = {row[key]}")
+... 
+name = Jamie
+species = cuttlefish
+tank_number = 7
+```
