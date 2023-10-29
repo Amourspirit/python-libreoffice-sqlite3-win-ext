@@ -280,6 +280,8 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
             # clean up by removing the ___lo_pip___ module from sys.modules
             # module still can be imported if needed.
             del sys.modules["___lo_pip___"]
+        if "_sqlite3" in sys.modules:
+            del sys.modules["_sqlite3"]
 
     # endregion Destructor
 
@@ -588,6 +590,9 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
 
     def _handel_embedded(self) -> None:
         if not self._get_needs_embedded():
+            import _sqlite3
+
+            self._logger.debug(f"sqlite3 module already installed: {_sqlite3.__file__}")
             return
         from ___lo_pip___.embedded_config import EmbeddedConfig
 
