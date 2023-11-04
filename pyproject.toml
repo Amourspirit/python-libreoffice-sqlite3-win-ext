@@ -88,7 +88,7 @@ es = "Agrega Sqlite3 a LibreOffice para Python"
 
 [tool.poetry]
 name = "sqlite3-win"
-version = "1.0.1"
+version = "1.0.2"
 description = "Adds Sqlite3 to LibreOffice for Python"
 authors = [":Barry-Thomas-Paul: Moss <bigbytetech@gmail.com>"]
 license = "MIT"
