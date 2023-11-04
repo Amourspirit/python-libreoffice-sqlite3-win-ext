@@ -125,9 +125,13 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
                 from ___lo_pip___.install.requirements_check import RequirementsCheck
             except Exception as err:
                 self._logger.error(err, exc_info=True)
-        self._requirements_check = RequirementsCheck()
-        self._add_site_package_dir_to_sys_path()
-        self._init_isolated()
+        try:
+            self._requirements_check = RequirementsCheck()
+            self._add_site_package_dir_to_sys_path()
+            self._init_isolated()
+        except Exception as err:
+            self._logger.error(err, exc_info=True)
+            raise
 
     # endregion Init
 
@@ -570,10 +574,16 @@ class ___lo_implementation_name___(unohelper.Base, XJob):
 
         target_path = TargetPath()
         if target_path.has_other_target:
+            self._logger.debug("Has other target, ensuring path exists.")
             target_path.ensure_exist()
+        else:
+            self._logger.debug("No other target.")
         if target_path.exist():
+            self._logger.debug("Target path exists, registering.")
             result = self._session.register_path(target_path.target, True)
             self._log_sys_path_register_result(target_path.target, result)
+        else:
+            self._logger.debug("Target path does not exist. Not registering.")
 
     # endregion Isolate
 
